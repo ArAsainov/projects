@@ -1,0 +1,185 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+enum CarType { truckType, sedanType, busType };
+
+
+namespace LR2SDPA
+{
+    abstract class Car
+    {
+        protected const int minSpeed = 50;
+        public CarType type;
+        public abstract int GetSpeed();
+        private string number;
+        public Car()
+        {
+            number = Car.GenerateNum();
+        }
+        public string GetTypeCar()
+        {
+            string q;
+            switch (type)
+            {
+                case CarType.truckType:
+                    q = "Грузовик";
+                    break;
+                case CarType.sedanType:
+                    q = "Легковая";
+                    break;
+                default:
+                    q = "Автобус";
+                    break;
+            }
+            return q;
+        }
+        public string GetColor()
+        {
+            string color = "Белый";
+            int x = rand.Next(1, 6);
+            switch (x)
+            {
+                case 1:
+                    color = "Чёрный";
+                    break;
+                case 2:
+                    color = "Жёлтый";
+                    break;
+                case 3:
+                    color = "Красный";
+                    break;
+                case 4:
+                    color = "Зеленый";
+                    break;
+            }
+            return color;
+        }
+        public bool HasPass()
+        {
+            int x = rand.Next(1, 3);
+            return x == 1;
+        }
+
+        public static Random rand = new Random();
+        public string GetNum() { return number; }
+        public static string GenerateNum()
+        {
+            char[] massWord = { 'А', 'В', 'С', 'Е', 'Н', 'K', 'M', 'O', 'P', 'T', 'Y', 'X' };
+            int firstWord = rand.Next(0, 12);
+            int a = rand.Next(0, 10);
+            int b = rand.Next(0, 10);
+            int c = rand.Next(0, 10);
+            int secondWord = rand.Next(0, 12);
+            int thirdWord = rand.Next(0, 12);
+            if (a == 0 && b == 0 && c == 0) c = 1;
+            string num = string.Concat(massWord[firstWord], a, b, c, massWord[secondWord], massWord[thirdWord]);
+            return num;
+        }
+    }
+    class Truck : Car
+    {
+        public Truck()
+        {
+            type = CarType.truckType;
+        }
+        public override int GetSpeed()
+        {
+            return rand.Next(minSpeed, 100);
+        }
+    }
+    class Sedan : Car
+    {
+        public Sedan()
+        {
+            type = CarType.sedanType;
+
+        }
+        public override int GetSpeed()
+        {
+            return rand.Next(minSpeed, 180);
+        }
+    }
+    class Bus : Car
+    {
+        public Bus()
+        {
+            type = CarType.busType;
+        }
+        public override int GetSpeed()
+        {
+            return rand.Next(minSpeed, 90);
+        }
+    }
+    class KPP
+    {
+        protected int MaxSpeed;
+        private int totalCars = 0, totalTrucks = 0, totalSedans = 0, totalBus = 0, totalExSp = 0, totalWN = 0, totalHasPass = 0;
+        List<string> WantedNumberList = new List<string>();
+
+        public KPP()
+        {
+            MaxSpeed = 90;
+            for (int i = 0; i < 500000; i++)
+            {
+                WantedNumberList.Add(Car.GenerateNum());
+            }
+        }
+
+        public void RegistrCar(Car a)
+        {
+
+            switch (a.type)
+            {
+                case CarType.truckType:
+                    totalTrucks++;
+                    break;
+                case CarType.sedanType:
+                    totalSedans++;
+                    break;
+                default:
+                    totalBus++;
+                    break;
+            }
+
+            Console.WriteLine("Автомобиль № {0}", ++totalCars);
+            Console.WriteLine("Тип авто {0}", a.GetTypeCar());
+            Console.WriteLine("Номер авто {0}", a.GetNum());
+            Console.WriteLine("Скорость авто {0}", a.GetSpeed());
+            Console.WriteLine("Цвет авто {0}", a.GetColor());
+
+            if (a.HasPass())
+            {
+                Console.WriteLine("C пассажиром!!!");
+                totalHasPass++;
+            }
+            else Console.WriteLine("Без пассажира!!!");
+
+            if (a.GetSpeed() > MaxSpeed)
+            {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine("******************Перехват, превышение скорости***************");
+                Console.BackgroundColor = ConsoleColor.Black;
+                totalExSp++;
+            }
+
+            if (WantedNumberList.Contains(a.GetNum())) {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine("******************Перехват, угнаный автомобиль***************");
+                Console.BackgroundColor = ConsoleColor.Black;
+                totalWN++;
+            }
+            Console.WriteLine("{0} {1} {2}", totalBus, totalSedans, totalTrucks);
+        }
+        public void RegistResult()
+        {
+            Console.WriteLine("****************************\nМашин зарегистрированно : {0}", totalCars);
+            Console.WriteLine("Из них: \n Легковых: {0} \n Грузовых: {1} \n Автобусов: {2}", totalSedans, totalTrucks, totalBus);
+            Console.WriteLine("Превысило скорость : {0}", totalExSp);
+            Console.WriteLine("Машин угнано : {0}", totalWN);
+            Console.WriteLine("Имеют пассажира : {0}", totalHasPass);
+        }
+    }
+}
