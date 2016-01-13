@@ -1,0 +1,47 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+namespace LR2SDPA
+{
+    
+    class Program
+    {
+        static void Main(string[] args) 
+        {
+            KPP edin = new KPP();
+
+            do
+                {
+                    int x = Car.rand.Next(1, 4);
+                    Car a;
+                    switch (x)
+                    {
+                        case 1:
+                            a = new Truck();
+                            break;
+                        case 2:
+                            a = new Sedan();
+                            break;
+                        default:
+                            a = new Bus();
+                            break;
+                    }
+                    //string number = Car.GetNum();
+                    
+                    edin.RegistrCar(a);   
+                    if (Console.KeyAvailable) 
+                    {
+                    char c = Console.ReadKey(true).KeyChar;
+                        if (c == 'x') break;
+                        }
+                    System.Threading.Thread.Sleep(Car.rand.Next(200, 1500));
+                } while (true);
+                edin.RegistResult();
+            Console.ReadKey();
+
+        }
+    }
+}
